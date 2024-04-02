@@ -10,6 +10,28 @@ function parseWhereClause(whereClause) {
     });
 }
 
+function parseJoinClause(query) {
+    const joinRegex = /\s(INNER|LEFT|RIGHT) JOIN\s(.+?)\sON\s([\w.]+)\s*=\s*([\w.]+)/i;
+    const joinMatch = query.match(joinRegex);
+
+    if (joinMatch) {
+        return {
+            joinType: joinMatch[1].trim(),
+            joinTable: joinMatch[2].trim(),
+            joinCondition: {
+                left: joinMatch[3].trim(),
+                right: joinMatch[4].trim()
+            }
+        };
+    }
+
+    return {
+        joinType: null,
+        joinTable: null,
+        joinCondition: null
+    };
+}
+
 function parseQuery(query) {
     // First, let's trim the query to remove any leading/trailing whitespaces
     query = query.trim();
@@ -41,19 +63,26 @@ function parseQuery(query) {
     const [, fields, table] = selectMatch;
 
     // Parse the JOIN part if it exists
-    let joinTable = null, joinCondition = null;
+    let joinTable = null, joinCondition = null, joinType = null;
     if (joinPart) {
-        const joinRegex = /^(.+?)\sON\s([\w.]+)\s*=\s*([\w.]+)/i;
+        const joinRegex = /^(.+?)\sON\s(.+)$/i;
         const joinMatch = joinPart.match(joinRegex);
         if (!joinMatch) {
             throw new Error('Invalid JOIN format');
         }
 
         joinTable = joinMatch[1].trim();
+        const onPart = joinMatch[2].trim();
+        const onSplit = onPart.split(/\s*=\s*/);
+        if (onSplit.length !== 2) {
+            throw new Error('Invalid JOIN condition');
+        }
+
         joinCondition = {
-            left: joinMatch[2].trim(),
-            right: joinMatch[3].trim()
+            left: onSplit[0].trim(),
+            right: onSplit[1].trim()
         };
+        joinType = 'INNER'; // Since it's an INNER JOIN
     }
 
     // Parse the WHERE part if it exists
@@ -67,8 +96,12 @@ function parseQuery(query) {
         table: table.trim(),
         whereClauses,
         joinTable,
-        joinCondition
+        joinCondition,
+        joinType
     };
 }
+
+module.exports = parseQuery;
+
 
 module.exports = parseQuery;
