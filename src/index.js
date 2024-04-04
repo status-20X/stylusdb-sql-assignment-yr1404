@@ -1,4 +1,4 @@
-const parseQuery = require('./queryParser');
+const { parseQuery } = require('./queryParser');
 const readCSV = require('./csvReader');
 
 // Helper functions for different JOIN types
@@ -76,6 +76,7 @@ async function executeSELECTQuery(query) {
         }
     }
 
+    // Apply WHERE clause
     const filteredData = whereClauses.length > 0
         ? data.filter(row => whereClauses.every(clause => evaluateCondition(row, clause)))
         : data;
