@@ -21,6 +21,8 @@ test('Parse SQL Query', () => {
         "joinType": null,
         "table": "student",
         "whereClauses": [],
+        groupByFields: null,
+        hasAggregateWithoutGroupBy: false
     });
 });
 

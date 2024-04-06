@@ -1,6 +1,6 @@
-function parseWhereClause(whereClause) {
+function parseWhereClause(whereString) {
     const conditionRegex = /(.*?)(=|!=|>=|<=|>|<)(.*)/;
-    return whereClause.split(/ AND | OR /i).map(conditionString => {
+    return whereString.split(/ AND | OR /i).map(conditionString => {
         if (conditionString.includes(' LIKE ')) {
             const [field, pattern] = conditionString.split(/\sLIKE\s/i);
             return { field: field.trim(), operator: 'LIKE', value: pattern.trim().replace(/^'(.*)'$/, '$1') };
@@ -37,6 +37,11 @@ function parseJoinClause(query) {
     };
 }
 
+function checkAggregateWithoutGroupBy(query, groupByFields) {
+    const aggregateFunctionRegex = /(\bCOUNT\b|\bAVG\b|\bSUM\b|\bMIN\b|\bMAX\b)\s*\(\s*(\*|\w+)\s*\)/i;
+    return aggregateFunctionRegex.test(query) && !groupByFields;
+}
+
 function parseQuery(query) {
 
     // Trim the query to remove any leading/trailing whitespaces
@@ -54,7 +59,7 @@ function parseQuery(query) {
         query = query.replace(orderByRegex, '');
     }
 
-    // Process GROUP BY clause and remove it for further processing
+    // Process ORDER BY clause and remove it for further processing
     const groupByRegex = /\sGROUP BY\s(.+)/i;
     const groupByMatch = query.match(groupByRegex);
     let groupByFields = null;
@@ -67,6 +72,8 @@ function parseQuery(query) {
     const whereSplit = query.split(/\sWHERE\s/i);
     const queryWithoutWhere = whereSplit[0]; // Everything before WHERE clause
     const whereClause = whereSplit.length > 1 ? whereSplit[1].trim() : null;
+
+    const hasAggregateWithoutGroupBy = checkAggregateWithoutGroupBy(query, groupByFields);
 
     // Process JOIN clause
     const joinSplit = queryWithoutWhere.split(/\s(INNER|LEFT|RIGHT) JOIN\s/i);
@@ -96,7 +103,8 @@ function parseQuery(query) {
         joinType,
         joinTable,
         joinCondition,
-        // groupByFields,
+        groupByFields,
+        hasAggregateWithoutGroupBy,
         // orderByFields
     };
 

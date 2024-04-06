@@ -20,6 +20,8 @@ test('Parse SQL Query', () => {
         "joinCondition": null,
         "joinTable": null,
         "joinType": null,
+        groupByFields: null,
+        hasAggregateWithoutGroupBy: false
     });
 });
 
@@ -47,6 +49,8 @@ test('Parse SQL Query with WHERE Clause', () => {
         "joinCondition": null,
         "joinTable": null,
         "joinType": null,
+        groupByFields: null,
+        hasAggregateWithoutGroupBy: false
     });
 });
 
@@ -77,6 +81,8 @@ test('Parse SQL Query with Multiple WHERE Clauses', () => {
         "joinCondition": null,
         "joinTable": null,
         "joinType": null,
+        groupByFields: null,
+        hasAggregateWithoutGroupBy: false
     });
 });
 
