@@ -22,7 +22,8 @@ test('Parse SQL Query', () => {
         "table": "student",
         "whereClauses": [],
         groupByFields: null,
-        hasAggregateWithoutGroupBy: false
+        hasAggregateWithoutGroupBy: false,
+        "orderByFields": null
     });
 });
 

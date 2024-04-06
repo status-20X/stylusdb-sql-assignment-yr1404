@@ -22,7 +22,8 @@ test('Parse SQL Query', () => {
         "table": "student",
         "whereClauses": [],
         groupByFields: null,
-        hasAggregateWithoutGroupBy: false
+        hasAggregateWithoutGroupBy: false,
+        "orderByFields": null
     });
 });
 
@@ -55,7 +56,8 @@ test('Parse SQL Query with WHERE Clause', () => {
             },
         ],
         groupByFields: null,
-        hasAggregateWithoutGroupBy: false
+        hasAggregateWithoutGroupBy: false,
+        "orderByFields": null
     });
 });
 

@@ -105,7 +105,7 @@ function parseQuery(query) {
         joinCondition,
         groupByFields,
         hasAggregateWithoutGroupBy,
-        // orderByFields
+        orderByFields
     };
 
 }
